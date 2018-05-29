@@ -1,0 +1,4 @@
+D:\jay\EmplyeeManagmentSystem\EmployeeManagmentSystem\Model\bin\Debug\Model.dll
+D:\jay\EmplyeeManagmentSystem\EmployeeManagmentSystem\Model\bin\Debug\Model.pdb
+D:\jay\EmplyeeManagmentSystem\EmployeeManagmentSystem\Model\obj\Debug\Model.dll
+D:\jay\EmplyeeManagmentSystem\EmployeeManagmentSystem\Model\obj\Debug\Model.pdb

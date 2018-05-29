@@ -1,0 +1,150 @@
+﻿@model List<DataAccess.tblDepartment>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_MasterPage.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label for="usr">Department Name:</label>
+                <input type="text" class="form-control" id="txtDeptName" required>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="form-group pull-right">
+                <a href="#" class="btn btn-success" style="margin-top: 23px;" id="btnSave">Save</a>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="hdnId" value="0" />
+    <div class="row">
+        <table class="table table-bordered table-responsive">
+            <thead>
+                <tr>
+                    <th>Department Name</th>
+                    <th style="text-align: center;">Edit</th>
+                    <th style="text-align: center;">Delete</th>
+
+
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Count != 0)
+                {
+                    foreach (var item in Model)
+                    {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td style="text-align: center;"><a href="#" onclick="fnGetDataById(@item.Id)"><i class="fa fa-pencil"></i></a></td>
+                        <td style="text-align: center;"><a href="#" onclick="fnDeleteById(@item.Id)"><i class="fa fa-trash" aria-hidden="true"></i></a></td>
+
+                    </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="3" style="text-align: center;">No Data Available</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        $("#btnSave").click(function () {
+            if (validation() == true) {
+                $.ajax({
+                    url: '/Department/Save',
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+
+                    data: "{'deptName': '" + $("#txtDeptName").val() + "','deptId': '" + $("#hdnId").val() + "'}",
+                    success: function (result) {
+                        if (result == "Ok") {
+                            alert("Data Save Successfully..!!");
+                            window.location.href = "@Url.Action("Index", "Department")"
+                        }
+                        else {
+                            alert("Department is already exists..!!");
+                            $("#txtDeptName").val('');
+                        }
+                    },
+                    error: function (err) {
+                        alert(err.statusText);
+                    }
+                });
+
+
+            }
+            else {
+                alert("Please enter data..!!");
+            }
+
+        });
+
+    });
+
+    function validation() {
+
+        var isValid = true;
+
+        if ($("#txtDeptName").val().length == 0) {
+            $("#txtDeptName").css('border-color', 'red');
+            isValid = false;
+        }
+        return isValid;
+
+    }
+
+    function fnGetDataById(id) {
+        $.ajax({
+            url: '/Department/GetDataById',
+            type: "POST",
+            data: '{deptId:"' + id + '"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                $.each(response, function (index, element) {
+                    $("#txtDeptName").val(response.Name);
+                    $("#hdnId").val(response.Id);
+
+                });
+
+            },
+            error: function (err) {
+                alert(err.statusText);
+            }
+        });
+
+    }
+    function fnDeleteById(id) {
+
+        if (confirm("Do you want to delete this record?")) {
+            $.ajax({
+                url: '/Department/Delete',
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+
+                data: "{'deptId': '" + id + "'}",
+                success: function (result) {
+                    if (result == "Ok") {
+                        window.location.href = "@Url.Action("Index", "Department")"
+                    }
+                    else {
+                        alert("Data is already in used in another table ,So you cannot delete it..!!");
+                    }
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                }
+            });
+        }
+
+    }
+</script>

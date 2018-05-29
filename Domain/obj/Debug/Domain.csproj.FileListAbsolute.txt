@@ -1,0 +1,5 @@
+D:\jay\EmplyeeManagmentSystem\EmployeeManagmentSystem\Domain\bin\Debug\Domain.dll
+D:\jay\EmplyeeManagmentSystem\EmployeeManagmentSystem\Domain\bin\Debug\Domain.pdb
+D:\jay\EmplyeeManagmentSystem\EmployeeManagmentSystem\Domain\obj\Debug\Domain.csprojResolveAssemblyReference.cache
+D:\jay\EmplyeeManagmentSystem\EmployeeManagmentSystem\Domain\obj\Debug\Domain.dll
+D:\jay\EmplyeeManagmentSystem\EmployeeManagmentSystem\Domain\obj\Debug\Domain.pdb

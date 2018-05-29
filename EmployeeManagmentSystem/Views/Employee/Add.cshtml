@@ -1,0 +1,229 @@
+﻿@{
+    ViewBag.Title = "Add";
+    Layout = "~/Views/Shared/_MasterPage.cshtml";
+}
+
+
+<style>
+    label {
+        font-size: 16px !important;
+    }
+
+    btn {
+        font-size: 18px !important;
+    }
+</style>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label for="usr">Department Name:</label>
+                <div class="form-group">
+                    <select id="drpDeptName" class="form-control">
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label for="usr">Name:</label>
+                <input type="text" class="form-control" id="txtName">
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label for="usr">SurName:</label>
+                <input type="text" class="form-control" id="txtSurName">
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="usr">ContactNumber:</label>
+                <input type="text" class="form-control" id="txtContact" maxlength="10">
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="usr">Qualification:</label>
+                <input type="text" class="form-control" id="txtQualification">
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group">
+                <label for="usr">Address:</label>
+                <textarea id="txtAddress" class="form-control" rows="4"></textarea>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group ">
+                <a href="#" class="btn btn-success" style="margin-top: 23px;" id="btnSave">Save</a>
+
+                <a href="@Url.Action("Index", "Employee")" class="btn btn-warning" style="margin-top: 23px;" >Back To List</a>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="hdnId" value="0" />
+</div>
+
+<script>
+    $(document).ready(function () {
+
+
+        $("#txtContact").keydown(function (e) {
+            // Allow: backspace, delete, tab, escape, enter and .
+            if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                // Allow: Ctrl+A, Command+A
+                (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                // Allow: home, end, left, right, down, up
+                (e.keyCode >= 35 && e.keyCode <= 40)) {
+                // let it happen, don't do anything
+                return;
+            }
+            // Ensure that it is a number and stop the keypress
+            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                e.preventDefault();
+            }
+        });
+
+
+            fnGetAllDepartment();
+            var empId = '@ViewBag.id'
+
+        fnGetDataById(empId);
+
+        $("#btnSave").click(function () {
+            debugger;
+            if (validation() == true) {
+                var mEmployee = {};
+                mEmployee.Id = $("#hdnId").val();
+                mEmployee.Name = $("#txtName").val();
+                mEmployee.Surname = $("#txtSurName").val();
+                mEmployee.DeptId = $("#drpDeptName").val();
+                mEmployee.Address = $("#txtAddress").val();
+                mEmployee.ContactNumber = $("#txtContact").val();
+                mEmployee.Qualification = $("#txtQualification").val();
+
+
+
+                $.ajax({
+                    url: '/Employee/Save',
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(mEmployee),
+                    dataType: "json",
+
+                    success: function (result) {
+                        if (result == "Ok") {
+                            window.location.href = "@Url.Action("Index", "Employee")"
+                        }
+                    },
+                    error: function (err) {
+                        alert(err.statusText);
+                    }
+                });
+
+
+            }
+            else {
+            }
+
+        });
+
+        });
+
+
+
+        function validation() {
+
+            var isValid = true;
+
+            if ($("#txtName").val().length == 0) {
+                $("#txtName").css('border-color', 'red');
+                isValid = false;
+            }
+            if ($("#txtSurName").val().length == 0) {
+                $("#txtSurName").css('border-color', 'red');
+                isValid = false;
+            }
+
+            if ($("#txtAddress").val().length == 0) {
+                $("#txtAddress").css('border-color', 'red');
+                isValid = false;
+            }
+
+            if ($("#txtContact").val().length == 0) {
+                $("#txtContact").css('border-color', 'red');
+                isValid = false;
+            }
+            if ($("#txtContact").val().length != 10) {
+                $("#txtContact").css('border-color', 'red');
+                alert("Enter valid mobile number");
+                isValid = false;
+            }
+
+            if ($("#txtQualification").val().length == 0) {
+                $("#txtQualification").css('border-color', 'red');
+                isValid = false;
+            }
+
+            if ($("#drpDeptName").val() == 0) {
+                $("#drpDeptName").css('border-color', 'red');
+                isValid = false;
+            }
+
+           
+
+            return isValid;
+
+        }
+
+        function fnGetDataById(empId) {
+            $.ajax({
+                url: '/Employee/GetDataById',
+                type: "POST",
+                data: '{empId:"' + empId + '"}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    $.each(response, function (index, element) {
+                        $("#txtName").val(response.Name);
+                        $("#txtSurName").val(response.Surname);
+                        $("#drpDeptName").val(response.DeptId);
+                        $("#txtAddress").val(response.Address);
+                        $("#txtContact").val(response.ContactNumber);
+                        $("#txtQualification").val(response.Qualification);
+
+                        $("#hdnId").val(response.Id);
+
+                    });
+
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                }
+            });
+
+        }
+
+        function fnGetAllDepartment() {
+            $.ajax({
+                url: '/Employee/GetAllDepartment',
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    $('#drpDeptName').empty().append('<option selected="selected" value="0">Select Department</option>');
+                    $.each(response, function (key, value) {
+                        $("#drpDeptName").append($("<option></option>").val(value.Id).html(value.Name));
+                    });
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                }
+            });
+        }
+
+
+
+</script>
